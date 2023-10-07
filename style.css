@@ -1,0 +1,92 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body{
+    background-color: #111;
+}
+.main-container{
+    display: flex;
+    gap: 2em;
+    justify-content: center;
+    max-height: 100vh;
+    margin: 4em auto;
+    flex-wrap: wrap;
+}
+.container{
+    min-height: 7em;
+    height: fit-content;
+    min-width: 20em;
+    background-color: #f2f2f2;
+    border-radius: 1em;
+    padding: 1em;
+}
+.container > h2{
+    padding-bottom: 10px;
+}
+.main > form{
+    display: none;
+
+}
+.d-form{
+    transition: transform 100ms ease-in;
+}
+.d-form > label{
+    cursor: pointer;
+}
+.open{
+    font-weight: 900;
+    font-size: 2em;
+}
+.open:hover{
+    opacity: .4;
+}
+#add{
+    visibility:hidden;
+    position: absolute;
+}
+.add{
+    display: flex;
+    justify-content: space-between;
+}
+form{
+    margin-bottom: 10px ;
+    transition: display 500ms ease-in-out;
+}
+form > input{
+    border-radius: 7px;
+    padding: 5px 10px;
+    border: 2px solid black;
+    outline: none;
+    margin-right: 10px;
+}
+form > button{
+    padding: 5px 10px;
+    background-color: blue;
+    border-radius: 10px;
+    color: #f2f2f2;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.to-do{
+    background-color: #030303;
+    color: white;
+    margin: .2em 0;
+    padding:.8em 1em;
+    border-radius: 4px;
+}
+.to-do:hover{
+    opacity:.95;
+}
+.dragging{
+    background-color: black;
+    color: wheat;
+    opacity: .9;
+    transform : scale(.89);
+}
