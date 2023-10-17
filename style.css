@@ -84,6 +84,9 @@ form > button{
 .to-do:hover{
     opacity:.95;
 }
+.draggable{
+    touch-action :none;
+}
 .dragging{
     background-color: black;
     color: wheat;
