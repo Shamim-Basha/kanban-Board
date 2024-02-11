@@ -15,6 +15,8 @@ const completedContainer = document.querySelector('.completed')
 const LOCAL_STORAGE_KEY = 'kanbanboard.list'
 let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
 
+let pass = true
+
 const sortbyorder = (a,b) => (a.order - b.order)
 lists = lists.sort(sortbyorder)
 
@@ -39,13 +41,21 @@ function renderlist(){
             lists = lists.filter(list => list.id != e.target.id)
             localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
         })
-
+        ////
         newtask.addEventListener("dragstart",()=>{
             newtask.classList.add("dragging")
         })
+        newtask.addEventListener("touchstart",(e)=>{
+            newtask.classList.add("dragging")
+        })
+        //
         newtask.addEventListener("dragend",()=>{
             newtask.classList.remove("dragging")
         })
+        newtask.addEventListener("touchend",()=>{
+            newtask.classList.remove("dragging")
+        })
+        ///
         if (list.container == 'todo'){
             todoContainer.appendChild(newtask)
         }else if(list.container == 'progress'){
@@ -96,6 +106,7 @@ form.addEventListener("submit",(e)=>{
     order()
 })
 
+///
 zone.forEach(zone=>{
     zone.addEventListener("dragover",(e)=>{
         e.preventDefault()
@@ -113,6 +124,43 @@ zone.forEach(zone=>{
         localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
     })
 })
+
+function findZoneAtCoordinates(x, y) {
+    for (const z of zone) {
+        const rect = z.getBoundingClientRect();
+        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+            return z;
+        }
+    }
+    return null;
+}
+
+document.addEventListener("touchstart",()=>{
+    const d = document.querySelector(".dragging")
+    pass = !d? false : true
+})
+document.addEventListener("touchmove",e=>{
+    if(!pass){
+        return
+    }
+    e.preventDefault()
+    const zones = findZoneAtCoordinates(e.touches[0].clientX,e.touches[0].clientY)
+    if (!zones ){
+        return
+    }
+    const afterel= dragafterel(zones,e.touches[0].clientY)
+    const dragging = document.querySelector(".dragging")
+    if (afterel == null){
+        zones.appendChild(dragging)
+    }else{
+        zones.insertBefore(dragging,afterel)
+    }
+    const selectedlist = lists.find(list =>list.id === dragging.id )
+    selectedlist.container = zones.classList[0]
+    order()
+    localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
+},{passive:!pass})
+//////
 
 function dragafterel(container,y){
     const draggableel = [...container.querySelectorAll(".to-do:not(.dragging)")]
