@@ -23,6 +23,7 @@ body{
     background-color: #f2f2f2;
     border-radius: 1em;
     padding: 1em;
+    margin: 1em;
 }
 .container > h2{
     padding-bottom: 10px;
@@ -75,14 +76,28 @@ form > button{
 }
 
 .to-do{
+    display: flex;
     background-color: #030303;
     color: white;
     margin: .2em 0;
     padding:.8em 1em;
     border-radius: 4px;
+    justify-content: space-between;
+    gap: .5rem;
 }
 .to-do:hover{
     opacity:.95;
+}
+.dltbtn{
+    background-color: transparent;
+    border: none;
+    opacity: .7;
+}
+.dltbtn svg{
+    width: 1rem;
+}
+.dltbtn:hover{
+    opacity: 1;
 }
 .draggable{
     touch-action :none;
@@ -93,3 +108,20 @@ form > button{
     opacity: .9;
     transform : scale(.89);
 }
+.delete{
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    padding-bottom: .5rem;
+}
+.delete button{
+    font-size: 0.7rem;
+    background-color: transparent;
+    border: none;
+    color: rgba(221, 17, 17, 0.963);
+    opacity: .6;
+}
+.delete button:hover{
+    opacity: 1;
+}
+

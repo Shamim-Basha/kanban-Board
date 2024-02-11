@@ -7,6 +7,7 @@ const main = document.querySelector(".main")
 const checkel = document.getElementById("add")
 const formel = document.querySelector(".d-form")
 const btn = document.querySelector(".d-form")
+const dltall = document.querySelector(".dltAll")
 
 const todoContainer = document.querySelector('.todo')
 const progressContainer = document.querySelector('.progress')
@@ -30,32 +31,51 @@ function renderlist(){
     })
     
     lists.forEach(list => {
-        const newtask = document.createElement('p')
+        const newtask = document.createElement('div')
         newtask.classList.add("draggable","to-do")
         newtask.setAttribute("draggable","true")
         newtask.id = list.id
-        newtask.innerText=list.name
-
-        newtask.addEventListener("dblclick",(e)=>{
-            e.target.remove()
-            lists = lists.filter(list => list.id != e.target.id)
+        const p = document.createElement('p')
+        p.innerText=list.name
+        const dltbtn = document.createElement("button")
+        dltbtn.classList.add("dltbtn")
+        dltbtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ff0000" d="M170.5 51.6L151.5 80h145l-19-28.4c-1.5-2.2-4-3.6-6.7-3.6H177.1c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80H368h48 8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8V432c0 44.2-35.8 80-80 80H112c-44.2 0-80-35.8-80-80V128H24c-13.3 0-24-10.7-24-24S10.7 80 24 80h8H80 93.8l36.7-55.1C140.9 9.4 158.4 0 177.1 0h93.7c18.7 0 36.2 9.4 46.6 24.9zM80 128V432c0 17.7 14.3 32 32 32H336c17.7 0 32-14.3 32-32V128H80zm80 64V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>`
+        dltbtn.onclick = ()=>{
+            newtask.remove()
+            lists = lists.filter(list => list.id != newtask.id)
             localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
-        })
+        }
+        newtask.appendChild(p)
+        newtask.appendChild(dltbtn)
+
         ////
         newtask.addEventListener("dragstart",()=>{
             newtask.classList.add("dragging")
         })
         newtask.addEventListener("touchstart",(e)=>{
-            newtask.classList.add("dragging")
+            newtask.addEventListener("touchmove",()=>{
+                newtask.classList.add("dragging")
+                pass = true
+            })
         })
         //
         newtask.addEventListener("dragend",()=>{
             newtask.classList.remove("dragging")
+            if (!completedContainer.childElementCount){
+                dltall.style.display = "none"
+            }else{
+                dltall.style.display = "block"
+            }
         })
         newtask.addEventListener("touchend",()=>{
             newtask.classList.remove("dragging")
+            pass = false
+            if (!completedContainer.childElementCount){
+                dltall.style.display = "none"
+            }else{
+                dltall.style.display = "block"
+            }
         })
-        ///
         if (list.container == 'todo'){
             todoContainer.appendChild(newtask)
         }else if(list.container == 'progress'){
@@ -92,7 +112,7 @@ formel.addEventListener("click",()=>{
         form.style.display = "none"
         btn.style.transform = "rotate(0)"
         btn.style.color = "#2d2d2d"
-    }s
+    }
 })
 
 
@@ -136,24 +156,28 @@ function findZoneAtCoordinates(x, y) {
 }
 
 document.addEventListener("touchstart",()=>{
-    const d = document.querySelector(".dragging")
-    pass = !d? false : true
+    pass = false
 })
 document.addEventListener("touchmove",e=>{
     if(!pass){
         return
     }
     e.preventDefault()
-    const zones = findZoneAtCoordinates(e.touches[0].clientX,e.touches[0].clientY)
+    const zones = findZoneAtCoordinates(e.touches[0].clientX,e.touches[0].clientY)?.querySelector(".zone")
     if (!zones ){
         return
     }
     const afterel= dragafterel(zones,e.touches[0].clientY)
     const dragging = document.querySelector(".dragging")
-    if (afterel == null){
+    // console.log(afterel.id)
+    if (!afterel){
         zones.appendChild(dragging)
     }else{
-        zones.insertBefore(dragging,afterel)
+        try{
+            zones.insertBefore(dragging,afterel)
+        }catch{
+            
+        }
     }
     const selectedlist = lists.find(list =>list.id === dragging.id )
     selectedlist.container = zones.classList[0]
@@ -175,4 +199,17 @@ function dragafterel(container,y){
     },{ offset : Number.NEGATIVE_INFINITY}).Element
 }
 
+dltall.onclick = ()=>{
+    while(completedContainer.firstChild){
+        if(completedContainer.firstChild.classList[0] = 'draggable')
+        completedContainer.removeChild(completedContainer.firstChild)
+    }
+    dltall.style.display = "none"
+    lists = lists.filter(list => list.container != "completed")
+    localStorage.setItem(LOCAL_STORAGE_KEY,JSON.stringify(lists))
+}
+
 renderlist()
+if (!completedContainer.childElementCount){
+    dltall.style.display = "none"
+}
